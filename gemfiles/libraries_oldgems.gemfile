@@ -5,7 +5,7 @@ gem 'eventmachine', '< 1.2.0'
 gem 'em-synchrony'
 # gem 'em-http-request'
 gem 'rest-client', '2.0.0'
-gem 'grpc' if RUBY_VERSION < '2.7.0'
+gem 'grpc', '1.6.0' if RUBY_VERSION < '2.7.0'
 
 group :development, :test do
   gem 'minitest'
@@ -33,7 +33,7 @@ gem 'mongo'
 gem 'curb', '0.8.6' unless defined?(JRUBY_VERSION)
 gem 'dalli'
 gem 'excon', '0.28.0'
-gem 'faraday', '0.7.6'
+gem 'faraday', '0.11.0'
 gem 'graphql', '1.7.4' # , :path => "/code/graphql-ruby" # keep for local testing/debugging
 gem 'httpclient', '2.3.0'
 gem 'logging'
@@ -43,7 +43,7 @@ gem 'patron', '0.7.0' # not instrumented, needed to test a non-instrumented fara
 gem 'redis'
 gem 'resque' unless defined?(JRUBY_VERSION)
 gem 'sequel'
-gem 'sidekiq'
+gem 'sidekiq', '< 6'
 gem 'typhoeus', '1.0.0'
 
 # Database adapter gems needed by sequel

@@ -298,7 +298,7 @@ if defined?(::Moped)
 
     it 'should trace find and update_all' do
       AppOpticsAPM::API.start_trace('moped_test', '', {}) do
-        @users.find(:name => "Mary").update_all({:name => "Tool"})
+        @users.find(:name => "Mary").update_all({ '$set' => {:name => "Tool"} })
       end
 
       traces = get_all_traces
@@ -315,7 +315,7 @@ if defined?(::Moped)
 
       validate_event_keys(traces[3], @entry_kvs)
       _(traces[3]['QueryOp']).must_equal "update_all"
-      _(traces[3]['Update_Document']).must_equal "{\"name\":\"Tool\"}"
+      _(traces[3]['Update_Document']).must_equal "{\"$set\":{\"name\":\"Tool\"}}"
       _(traces[3]['Collection']).must_equal "users"
       _(traces[3].has_key?('Backtrace')).must_equal AppOpticsAPM::Config[:moped][:collect_backtraces]
       validate_event_keys(traces[4], @exit_kvs)

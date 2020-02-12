@@ -44,7 +44,12 @@ gem 'patron' # not instrumented, needed to test a non-instrumented faraday adapt
 gem 'redis'
 gem 'resque' unless defined?(JRUBY_VERSION)
 gem 'sequel'
-gem 'sidekiq'
+if RUBY_VERSION < '2.5.0'
+gem 'sidekiq', '< 6'
+else
+  gem 'sidekiq'
+end
+
 gem 'typhoeus'
 
 # Database adapter gems needed by sequel

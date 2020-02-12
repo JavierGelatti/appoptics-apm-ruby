@@ -6,7 +6,7 @@ require 'minitest_helper'
 ENV['APPOPTICS_MONGO_SERVER'] ||= "127.0.0.1:27017"
 ENV['APPOPTICS_MONGO_SERVER'] += ':27017' unless ENV['APPOPTICS_MONGO_SERVER'] =~ /\:27017$/
 
-if defined?(::Mongo::VERSION) && Mongo::VERSION >= '2.0.0'
+if Gem.loaded_specs['mongo'] && Gem.loaded_specs['mongo'].version >= Gem::Version.new('2.0')
   describe "MongoCollection" do
     before do
       clear_all_traces
@@ -14,7 +14,7 @@ if defined?(::Mongo::VERSION) && Mongo::VERSION >= '2.0.0'
       @client = Mongo::Client.new([ ENV['APPOPTICS_MONGO_SERVER'] ], :database => "appoptics_apm-#{ENV['RACK_ENV']}")
       @db = @client.database
 
-      if Mongo::VERSION < '2.2'
+      if Gem.loaded_specs['mongo'].version < Gem::Version.new('2.2')
         Mongo::Logger.logger.level = Logger::INFO
       else
         @client.logger.level = Logger::INFO
@@ -55,7 +55,7 @@ if defined?(::Mongo::VERSION) && Mongo::VERSION >= '2.0.0'
       _(traces.count).must_equal 4
 
       _(r).must_be_instance_of ::Mongo::Operation::Result
-      if Mongo::VERSION < '2.2'
+      if Gem.loaded_specs['mongo'].version < Gem::Version.new('2.2')
         _(r.successful?).must_equal true
       else
         _(r.ok?).must_equal true
@@ -87,7 +87,7 @@ if defined?(::Mongo::VERSION) && Mongo::VERSION >= '2.0.0'
       _(traces.count).must_equal 4
 
       _(r).must_be_instance_of ::Mongo::Operation::Result
-      if Mongo::VERSION < '2.2'
+      if Gem.loaded_specs['mongo'].version < Gem::Version.new('2.2')
         _(r.successful?).must_equal true
       else
         _(r.ok?).must_equal true
@@ -144,10 +144,11 @@ if defined?(::Mongo::VERSION) && Mongo::VERSION >= '2.0.0'
       traces = get_all_traces
       _(traces.count).must_equal 4
 
-      _(r).must_be_instance_of Mongo::Operation::Insert::Result
-      if Mongo::VERSION < '2.2'
+      if Gem.loaded_specs['mongo'].version < Gem::Version.new('2.2')
+        _(r).must_be_instance_of Mongo::Operation::Write::Insert::Result
         _(r.successful?).must_equal true
       else
+        _(r).must_be_instance_of Mongo::Operation::Insert::Result
         _(r.ok?).must_equal true
       end
 
@@ -173,7 +174,7 @@ if defined?(::Mongo::VERSION) && Mongo::VERSION >= '2.0.0'
       traces = get_all_traces
       _(traces.count).must_equal 4
 
-      if Mongo::VERSION < '2.1'
+      if Gem.loaded_specs['mongo'].version < Gem::Version.new('2.1')
         _(r).must_be_instance_of Mongo::Operation::Insert::Result
       else
         _(r).must_be_instance_of Mongo::BulkWrite::Result
@@ -529,7 +530,7 @@ if defined?(::Mongo::VERSION) && Mongo::VERSION >= '2.0.0'
       validate_event_keys(traces[1], @entry_kvs)
       validate_event_keys(traces[2], @exit_kvs)
 
-      if Mongo::VERSION < '2.1'
+      if Gem.loaded_specs['mongo'].version < Gem::Version.new('2.1')
         _(r).must_be_instance_of Hash
         _(r[:n_inserted]).must_equal 2
       else
